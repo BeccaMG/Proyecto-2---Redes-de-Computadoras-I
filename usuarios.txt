@@ -1,0 +1,7 @@
+luis:12345
+rebeca:54321
+monica:00000
+marcela:11111
+pedro:22222
+pablo:33333
+superuser:444

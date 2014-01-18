@@ -1,0 +1,7 @@
+sub w1
+sub w2
+sub w3
+lls
+rls
+bor w2
+rls

@@ -1,0 +1,125 @@
+********************************************************************************
+*                                                                              *
+*                                     README                                   *
+*                                                                              *
+********************************************************************************
+
+Desarrollado por:
+
+    Luis Fernandes 10-10239 <lfernandes@ldc.usb.ve>
+    Rebeca Machado 10-10406 <rebeca@ldc.usb.ve>
+    
+    
+ARCHIVOS INCLUÍDOS EN LA ENTREGA
+================================
+
+    Archivo.java
+    a_rmifs.java
+    AuthServicesImpl.java
+    AuthServices.java
+    Bitacora.java
+    Comando.java
+    comandos.txt
+    CorrectaInvocacion.java
+    c_rmifs.java
+    Ejemplos
+    FileServicesImpl.java
+    FileServices.java
+    LEEME.txt
+    Makefile
+    NoAutenticadoException.java
+    NoPropietarioException.java
+    s_rmifs.java
+
+    org/
+    com/
+
+
+DEPENDENCIAS DEL PROYECTO
+=========================
+
+    com/ : rmiio 2.0.4 (OpenHMS)
+            http://openhms.sourceforge.net/rmiio/
+            Permite enviar archivos mediante RMI de gran tamaño y sin uso de un
+            arreglo de bytes.
+
+    org/ : commons-logging 1.1.3 (Apache)
+            http://commons.apache.org/proper/commons-logging/
+            Dependencia de rmiio (Logger).
+
+
+MODO DE COMPILACIÓN/INVOCACIÓN
+==============================
+
+  1. Ejecutar
+    &> make
+    
+  2. Ejecutar
+  
+    &> java a_rmifs -f usuarios -p puerto
+    
+  3. Ejecutar
+    
+    &> java s_rmifs -l puertolocal -h host -r puerto
+
+  4. Ejecutar
+
+    &> java c_rmifs [-f usuarios] -m servidor -p puerto [-c comandos]
+
+
+DESCRIPCIÓN DEL PROYECTO
+========================
+
+    El programa consiste en un servicio de almacenamiento centralizado de archivos
+mediante el uso de RMI en lenguaje java. Se compone de un servidor central de
+manejo y almacenamiento (s_rmifs) de archivos que utiliza servicios de autenticación
+procedentes de otro servidor (a_rmifs). Los clientes (c_rmifs) se conectan a
+este servidor central para descargar o subir archivos.
+
+    
+FUNCIONAMIENTO
+==============
+
+    a_rmifs:
+        Es el servidor de autenticación. Este servidor obtiene su base de datos
+        de usuarios y contraseñas de un archivo proporcionado al momento de
+        ejecutarlo. Con este archivo crea una base de datos que exporta por
+        RMI para uso del servidor de archivos. Para llevar a cabo esta tarea
+        utiliza la interfaz AuthServices.java y la implementación 
+        AuthServicesImpl.java (el objeto que se exporta y contiene la base de
+        datos).
+
+    s_rmifs:
+        Es el servidor de archivos. Este programa se encarga de ofrecer servicios
+        a sus clientes para subir y descargar archivos. Los clientes deben estar
+        autenticados para utilizar estos servicios, por esto el programa usa la
+        base de datos del servidor de autenticación. Además, el servidor mantiene
+        una bitácora de comandos que ejecutan sus clientes. Para realizar su
+        función, se utilizan los siguientes archivos:
+            * FileServices.java y FileServicesImpl.java: implementan el objeto
+            remoto que se exporta a los clientes por medio del cual se bajan,
+            cargan, listan y borran archivos. Para poder enviar archivos mediante
+            RMI, se utiliza la dependencia rmiio listada anteriormente. Esta a su
+            vez depende de commons-loggin de Apache. 
+            
+            * Comando.java, Archivo.java: clases que representan un comando y un
+            archivo.
+
+            * NoAutenticadoException.java, NoPropietarioException.java: excepciones
+            que el servidor lanza cuando un usuario no está autenticado o no es
+            propietario de un archivo, respectivamente.
+
+    c_rmifs:
+        Cliente que se conecta al servidor de archivos para utilizar sus servicios
+        mediante un objeto remoto en RMI. Captura las excepciones y muestra
+        mensajes adecuados al usuario. Utiliza igualmente la librería rmiio en
+        com/ para enviar archivos mediante RMI. También tiene la opción de 
+        ejecutar comandos desde un archivos y de listar los archivos disponibles
+        para cargar al servidor.
+
+
+    * Todos los programas utilizan CorrectaInvocación.java para mostrar mensajes
+      de error al invocar.
+    * Los archivos disponibles tanto para el servidor como para el cliente deben
+      estar en el directorio donde se ejecutaron.
+
